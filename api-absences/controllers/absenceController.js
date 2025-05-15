@@ -1,31 +1,29 @@
 import Absence from "../models/absence.js";
 import axios from "axios";
+import { publishToQueue } from "../events/publisher.js";
 
 
-export const createAbsence = (req, res) => {
-  const { studentId, comment, date, status } = req.body;
-  const absence = new Absence({
-    studentId,
-    date,
-    status,
-    comment,
-  });
+export const createAbsence = async (req, res) => {
   try {
-    absence.save();
-
-    const response =axios.put(`http://api-students:9000/students/${studentId}/increment-absence`);
-    if (response.status !== 200) {
-      return res.status(500).json({ message: "Absence créée, mais échec de la mise à jour du total d'absences de l'étudiant." });
-    }
-
-    res.status(201).json({ message: "Absence created successfully!iiii" });
-  } catch (err) {
-    res.status(500).json({ message: "Error: cannot add this absence! " + err.message});
-  }
+      const {studentId,comment,date,status  } = req.body;
+      const absence = new Absence({  studentId,date,status,comment});
+      const saved = await absence.save();
   
+      await publishToQueue('absence_created', {
+        absence_id: saved._id,
+        studentId,
+        
+       
+      });
+  
+      res.status(201).json(saved);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+};
 
  
-};
+
 
 export const getAbsences = (req, res) => {
   Absence.find()

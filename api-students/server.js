@@ -8,6 +8,7 @@ import {
   updateStudent,
 } from "./controllers/studentController.js";
 import { increaseStudentAbsence } from "./controllers/studentController.js";
+import { consumeCreateAbsenceQueue } from "./events/consumer.js";
 
 const app = express();
 const PORT = 9000;
@@ -26,6 +27,7 @@ sequelize
     console.log("La base de données est connectée.");
     app.listen(PORT, () => {
       console.log(`Le serveur est en cours d'exécution sur le port ${PORT}.`);
+      consumeCreateAbsenceQueue();
     });
   })
   .catch((error) => {

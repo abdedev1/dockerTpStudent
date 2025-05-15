@@ -7,7 +7,12 @@ const absence_schema =new mongoose.Schema({
     default: Date.now()
   },
   comment: String,
-  status: String,
+  status: {
+      type: String,
+      enum: ["EN_ATTENTE", "ENREGISTRE", "NON_ENREGISTRE"],
+      default: "EN_ATTENTE",
+  },
+
 });
 
 export default mongoose.model("Absence", absence_schema);

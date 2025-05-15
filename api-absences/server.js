@@ -8,6 +8,8 @@ import {
   getAbsencesByStudentId,
   updateAbsence,
 } from "./controllers/absenceController.js";
+import  {consumeTotalAbsenceUpdateMessages} from './events/consumer.js'
+
 
 const app = express();
 const port = 7000;
@@ -19,6 +21,7 @@ app.get("/absences/:id", getAbsenceById);
 app.put("/absences/:id", updateAbsence);
 app.delete("/absences/:id", deleteAbsence);
 app.get("/absences/student/:studentId", getAbsencesByStudentId);
+
 
 
 const {
@@ -35,6 +38,7 @@ mongoose
     console.log("MongoDB connected");
     app.listen(port, () => {
       console.log(`API achats lancé sur http://localhost:${port}`);
+      consumeTotalAbsenceUpdateMessages();
     });
   })
   .catch((err) => {

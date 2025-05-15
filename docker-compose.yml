@@ -1,4 +1,12 @@
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    environment:
+      - RABBITM_DEFAULT_USER=gust  # Port pour les connexions AMQP
+      - RABBITM_DEFAULT_PASS=gust  # Port pour les connexions AMQP
+    networks:
+      - my_network
   api-students:
     build: ./api-students
     container_name: api_students
